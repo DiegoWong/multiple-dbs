@@ -1,0 +1,11 @@
+apiVersion: db.foo.com/v1alpha1
+kind: MultipleDbs
+metadata:
+  name: multipledbs-sample
+spec:
+  # Add fields here
+  dbs:
+  - image: nginx
+    replicas: 1
+  - image: redis
+    replicas: 1

@@ -1,0 +1,24 @@
+# permissions for end users to edit multipledbs.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: multipledbs-editor-role
+rules:
+- apiGroups:
+  - db.foo.com
+  resources:
+  - multipledbs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - db.foo.com
+  resources:
+  - multipledbs/status
+  verbs:
+  - get

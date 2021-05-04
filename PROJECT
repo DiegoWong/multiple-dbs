@@ -1,0 +1,19 @@
+domain: foo.com
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: multiple-dbs
+repo: github.com/DiegoWong/multiple-dbs.git
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: foo.com
+  group: db
+  kind: MultipleDbs
+  path: github.com/DiegoWong/multiple-dbs.git/api/v1alpha1
+  version: v1alpha1
+version: "3"

@@ -1,0 +1,20 @@
+# permissions for end users to view multipledbs.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: multipledbs-viewer-role
+rules:
+- apiGroups:
+  - db.foo.com
+  resources:
+  - multipledbs
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - db.foo.com
+  resources:
+  - multipledbs/status
+  verbs:
+  - get
