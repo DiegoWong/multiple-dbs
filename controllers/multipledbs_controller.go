@@ -69,6 +69,8 @@ func (r *MultipleDbsReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, err
 	}
 
+	hasImage := make(map[string]bool)
+
 	for _, db := range multipledbs.Spec.Dbs {
 		// Check if the deployment already exists, if not create a new one
 		found := &appsv1.Deployment{}
@@ -100,6 +102,20 @@ func (r *MultipleDbsReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			// Spec updated - return and requeue
 			return ctrl.Result{Requeue: true}, nil
 		}
+
+		hasImage[db.Image] = true
+	}
+
+	deployList := &appsv1.DeploymentList{}
+	multipledbsLabel := client.MatchingLabels{"multipledbs": multipledbs.Name}
+	err = r.List(ctx, deployList, multipledbsLabel)
+
+	for _, deploy := range deployList.Items {
+		_, found := hasImage[deploy.Labels["image"]]
+		log.Info("Delete Deployment", "Deployment.Namespace", deploy.Namespace, "Deployment.Name", deploy.Name)
+		if !found {
+			err = r.Delete(ctx, &deploy)
+		}
 	}
 
 	return ctrl.Result{}, nil
@@ -112,6 +128,7 @@ func (r *MultipleDbsReconciler) dbDeployment(m *dbv1alpha1.MultipleDbs, replicas
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      m.Name + "-" + image,
 			Namespace: m.Namespace,
+			Labels:    map[string]string{"multipledbs": m.Name, "image": image},
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: &replicas,
